@@ -1,5 +1,7 @@
 package game_code;
 
+import java.util.ArrayList;
+
 public class Mankala {
     private int[] gameState = new int[]{4,4,4,4,4,4,0,4,4,4,4,4,4,0};
     private boolean firstPlayerTurn = true;
@@ -15,6 +17,17 @@ public class Mankala {
     public Mankala(int [] state, boolean turn){
         gameState = state;
         firstPlayerTurn = turn;
+    }
+    public Mankala(Mankala mankala){
+        int[] tempM = new int [mankala.gameState.length];
+        for (int i=0;i<=secondPlayerWell;i++){
+            tempM[i]=mankala.gameState[i];
+        }
+        gameState=tempM;
+        firstPlayerWell= mankala.firstPlayerWell;
+        secondPlayerWell = mankala.secondPlayerWell;
+        firstPlayerTurn = mankala.firstPlayerTurn;
+        isGameFinished = mankala.isGameFinished;
     }
 
     public void makeMove(int holeIndex) {//throws Exception {
@@ -80,6 +93,17 @@ public class Mankala {
             }
         }
 
+        //zakonczenie gry
+        if(isMySiteEmpty()){
+            gameState[secondPlayerWell]=48-gameState[firstPlayerWell];
+            isGameFinished=true;
+        }
+        if(isOponentSiteEmpty() && !isGameFinished){
+            gameState[firstPlayerWell]=48-gameState[secondPlayerWell];
+            isGameFinished=true;
+        }
+
+
         //powtórzona tura po wrzuceniu do studni
         if(firstPlayerTurn){
             if(lastStoneIndex==firstPlayerWell){
@@ -95,13 +119,38 @@ public class Mankala {
             }
         }
 
+        //czyszczenie planszy
+        if(isGameFinished){
+            for (int i=0;i<secondPlayerWell;i++){
+                if(i!=firstPlayerWell){
+                    gameState[i]=0;
+                }
+            }
+        }
+
 
     }
+
 
     //metody pomocnicze
     public boolean isIndexPermitted(int holeIndex){
         if( gameState[holeIndex]==0)    return false;
         return isYourSiteIndex(holeIndex);
+    }
+
+    public ArrayList<Integer> getAvalibleMoves(){
+        ArrayList<Integer> moves = new ArrayList<>();
+        for (int i=0;i<firstPlayerWell;i++){
+            if(isIndexPermitted(i)){
+                moves.add(new Integer(i));
+            }
+        }
+        for (int i=firstPlayerWell+1;i<secondPlayerWell;i++){
+            if(isIndexPermitted(i)){
+                moves.add(new Integer(i));
+            }
+        }
+        return moves;
     }
 
     public boolean isYourSiteIndex(int holeIndex){
@@ -131,6 +180,30 @@ public class Mankala {
         }
         System.out.println();
     }
+
+    public boolean isMySiteEmpty(){
+        boolean isEmpty=true;
+        for(int i = 0; i<firstPlayerWell;i++){
+            if(gameState[i]!=0) isEmpty=false;
+        }
+        return isEmpty;
+    }
+    public boolean isOponentSiteEmpty(){
+        boolean isEmpty=true;
+        for(int i = firstPlayerWell+1; i<secondPlayerWell;i++){
+            if(gameState[i]!=0) isEmpty=false;
+        }
+        return isEmpty;
+    }
+
+    public int getMyScore(){
+        return gameState[firstPlayerWell];
+    }
+
+    public int getOponentScore(){
+        return gameState[secondPlayerWell];
+    }
+
     //setery , gettery
     public int[] getGameState() {
         return gameState;
@@ -146,5 +219,11 @@ public class Mankala {
         this.firstPlayerTurn = firstPlayerTurn;
     }
 
+    public boolean isGameFinished() {
+        return isGameFinished;
+    }
 
+    public void setGameFinished(boolean gameFinished) {
+        isGameFinished = gameFinished;
+    }
 }

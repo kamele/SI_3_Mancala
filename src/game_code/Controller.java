@@ -27,7 +27,7 @@ public class Controller {
 
     @FXML
     private void initialize(){
-        mankala= new Mankala(new int[]{4,4,4,4,4,4,0,4,4,4,1,0,4,0},true);
+        mankala= new Mankala();
         Buttons = new ArrayList<Button>();
         Buttons.add(Button0);
         Buttons.add(Button1);
@@ -66,8 +66,14 @@ public class Controller {
         if(!mankala.isIndexPermitted(holeIndex)) return;
 
         mankala.makeMove(holeIndex);
+
+
         updateBoardView();
 
+        if(!mankala.isFirstPlayerTurn() && !mankala.isGameFinished()){
+            int aiMove = AlgMax.bestMove(mankala);
+            makeMove(aiMove);
+        }
     }
 
 
