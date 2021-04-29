@@ -31,7 +31,7 @@ public class Mankala {
     }
 
     public void makeMove(int holeIndex) {//throws Exception {
-        System.out.println("makeMove("+holeIndex+")");
+        //System.out.println("makeMove("+holeIndex+")");
         if(!isIndexPermitted(holeIndex)) System.out.println("Nie spełnione warunki wyboru - niedozwolona akcja");//throw new Exception("Nie spełnione warunki wyboru studni");
 
         //rozdawanie kamieni

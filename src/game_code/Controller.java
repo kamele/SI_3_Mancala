@@ -71,7 +71,7 @@ public class Controller {
         updateBoardView();
 
         if(!mankala.isFirstPlayerTurn() && !mankala.isGameFinished()){
-            int aiMove = AlgMax.bestMove(mankala);
+            int aiMove = AlgMax.getBestMove(mankala);//AlgMax.bestMove(mankala);
             makeMove(aiMove);
         }
     }
