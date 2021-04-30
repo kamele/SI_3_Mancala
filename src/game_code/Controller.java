@@ -24,10 +24,12 @@ public class Controller {
     public Button Button12;
     public Button Button13;
     public Label RuchKolejnoscEtykieta;
+    public Label gemeStateLabel;
 
     @FXML
     private void initialize(){
         mankala= new Mankala();
+
         Buttons = new ArrayList<Button>();
         Buttons.add(Button0);
         Buttons.add(Button1);
@@ -71,6 +73,7 @@ public class Controller {
         updateBoardView();
 
         if(!mankala.isFirstPlayerTurn() && !mankala.isGameFinished()){
+
             int aiMove = AlgMax.getBestMove(mankala);//AlgMax.bestMove(mankala);
             makeMove(aiMove);
         }
@@ -78,6 +81,17 @@ public class Controller {
 
 
     public void updateBoardView(){
+        if(mankala.isGameFinished()){
+            if(mankala.getMyScore()>= mankala.getOponentScore()){
+                if(mankala.getMyScore()==mankala.getOponentScore())
+                    gemeStateLabel.setText("Tie");
+                else
+                    gemeStateLabel.setText("Win");
+            }else{
+                gemeStateLabel.setText("Lost");
+            }
+        }
+
         if(mankala.isFirstPlayerTurn()){
             RuchKolejnoscEtykieta.setText("Twój");
         }else{

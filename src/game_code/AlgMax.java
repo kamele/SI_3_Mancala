@@ -37,24 +37,18 @@ public class AlgMax {
     }
 
     public static int[] minMax(Mankala mankala, int moveMade, int depth){
-        System.out.print("minMax: move="+moveMade+"  depth="+depth);
         //warunek zakonczenia przeszukiwania
         if(mankala.isGameFinished() || depth==0){
-            int s=mankala.getMyScore()-mankala.getOponentScore();
-            System.out.println("    zwraca "+moveMade+"  wynik="+s);
             return new int[]{moveMade, mankala.getMyScore()-mankala.getOponentScore()};
-        }else{
-            System.out.println();
         }
 
-        ArrayList<Integer> moves =mankala.getAvalibleMoves();
+        ArrayList<Integer> moves = mankala.getAvalibleMoves();
         int bestMove = moves.get(0);
         int bestScore = mankala.isFirstPlayerTurn() ? Integer.MIN_VALUE : Integer.MAX_VALUE;
 
         for (Integer move: moves ) {
             Mankala copyMankala = new Mankala(mankala);
             copyMankala.makeMove(move);
-            //int score = copyMankala.getMyScore()-copyMankala.getOponentScore();
             int[] copyScore = minMax(copyMankala, move,depth-1);
 
             if(mankala.isFirstPlayerTurn()){

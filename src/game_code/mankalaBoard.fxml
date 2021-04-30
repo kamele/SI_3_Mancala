@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<Pane fx:controller="game_code.Controller" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="388.0" prefWidth="720.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="388.0" prefWidth="720.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="game_code.Controller">
    <children>
 
       <Label />
@@ -56,5 +56,9 @@
          </font>
       </Label>
       <Label fx:id="RuchKolejnoscEtykieta" layoutX="71.0" layoutY="54.0" text="Twój" />
+      <Label fx:id="gemeStateLabel" layoutX="574.0" layoutY="45.0" prefHeight="72.0" prefWidth="101.0" textFill="#5c24e0">
+         <font>
+            <Font size="36.0" />
+         </font></Label>
    </children>
 </Pane>
