@@ -21,12 +21,47 @@ public class Main extends Application {
         launch(args);
 
         System.out.println("Start Main");
-        //Mankala mankala = new Mankala();
+        Mankala mankala = new Mankala();
+        //mankala.setFirstPlayerTurn(false);
 
-        //System.out.println("tworzenie");
+        System.out.println("tworzenie");
 
-
+//        for (int i = 0; i < 100; i++) {
+//            int aiMove = AlgMax.getBestMove(mankala);//, mankala.isFirstPlayerTurn());
+//            mankala.makeMove(aiMove);
+//            System.out.print(i+") "+aiMove+" ");
+//            mankala.printGameState();
+//        }
+        makeMoveAi(mankala, mankala.getRandomMove());
     }
+
+    public static void makeMoveAi(Mankala mankala, int holeIndex){
+        if(!mankala.isIndexPermitted(holeIndex)){
+            System.out.println("Ruch niedozwolonyu"+holeIndex);
+            //return;
+        }
+
+        System.out.println("wykonanj ruch. Tura:"+mankala.isFirstPlayerTurn());
+        mankala.makeMove(holeIndex);
+        System.out.println("wykonano ruch. Tura:"+mankala.isFirstPlayerTurn());
+
+        if( !mankala.isGameFinished()){
+            System.out.println("wywołaj kolejny. Tura:"+mankala.isFirstPlayerTurn());
+            int aiMove = AlgMax.bestMove(mankala, mankala.isFirstPlayerTurn());
+            makeMoveAi(mankala, aiMove);
+
+        }else{
+            if(mankala.getMyScore()>= mankala.getOponentScore()){
+                if(mankala.getMyScore()==mankala.getOponentScore())
+                    System.out.println("Tie "+mankala.getMyScore()+"  :  "+mankala.getOponentScore());
+                else
+                    System.out.println("Win "+mankala.getMyScore()+"  :  "+mankala.getOponentScore());
+            }else{
+                System.out.println("Lost "+mankala.getMyScore()+"  :  "+mankala.getOponentScore());
+            }
+        }
+    }
+
 
     public static void tests(){
         Mankala mankala = new Mankala();

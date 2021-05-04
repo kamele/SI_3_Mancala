@@ -5,6 +5,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 public class Controller {
     public Mankala mankala;
@@ -25,10 +26,12 @@ public class Controller {
     public Button Button13;
     public Label RuchKolejnoscEtykieta;
     public Label gemeStateLabel;
+    public Button AiVsAiButton;
 
     @FXML
     private void initialize(){
         mankala= new Mankala();
+
 
         Buttons = new ArrayList<Button>();
         Buttons.add(Button0);
@@ -49,18 +52,21 @@ public class Controller {
 
         updateBoardView();
 
-//        for (Button b: Buttons ) {
-//            b.setText("4");
-//        }
-//
-//        Buttons.get(6).setText("0");
-//        Buttons.get(13).setText("0");
+        for (Button b: Buttons ) {
+            b.setText("4");
+        }
+
+        Buttons.get(6).setText("0");
+        Buttons.get(13).setText("0");
+
+        //człowiek ai gui actions
 
         for (int i=0; i<Buttons.size(); i++) {
             int finalI = i;
             Buttons.get(i).setOnAction(event -> makeMove(finalI));
         }
-
+        //ai vs ai
+        AiVsAiButton.setOnAction(event -> playAiVsAi());
 
     }
 
@@ -72,15 +78,57 @@ public class Controller {
 
         updateBoardView();
 
+        //czlowiek ai
         if(!mankala.isFirstPlayerTurn() && !mankala.isGameFinished()){
 
-            int aiMove = AlgMax.getBestMove(mankala);//AlgMax.bestMove(mankala);
+            int aiMove = AlgMax.getBestMove(mankala, mankala.isFirstPlayerTurn());//AlgMax.bestMove(mankala);
             makeMove(aiMove);
         }
     }
 
+    public void makeMoveAi(int holeIndex){
+        if(!mankala.isIndexPermitted(holeIndex)){
+            System.out.println("Ruch niedozwolonyu"+holeIndex);
+            return;
+        }
+
+        System.out.println("wykonaj ruch "+holeIndex+". Tura:"+mankala.isFirstPlayerTurn());
+        mankala.makeMove(holeIndex);
+        //System.out.println("wykonano ruch "+holeIndex+". Tura:"+mankala.isFirstPlayerTurn());
+
+        updateBoardView();
+        mankala.printGameState();
+
+
+        if( !mankala.isGameFinished()){
+
+            System.out.println("wywołaj kolejny. Tura:"+mankala.isFirstPlayerTurn());
+            int aiMove = AlgMax.bestMove(mankala, mankala.isFirstPlayerTurn());
+            makeMoveAi(aiMove);
+
+        }else{
+            if(mankala.getMyScore()>= mankala.getOponentScore()){
+                if(mankala.getMyScore()==mankala.getOponentScore())
+                    System.out.println("Tie "+mankala.getMyScore()+"  :  "+mankala.getOponentScore());
+                else
+                    System.out.println("Win "+mankala.getMyScore()+"  :  "+mankala.getOponentScore());
+            }else{
+                System.out.println("Lost "+mankala.getMyScore()+"  :  "+mankala.getOponentScore());
+            }
+        }
+    }
+
+
+    public void playAiVsAi(){
+        mankala = new Mankala();
+        updateBoardView();
+
+        makeMoveAi(mankala.getRandomMove());
+    }
 
     public void updateBoardView(){
+        System.out.println("update");
+
         if(mankala.isGameFinished()){
             if(mankala.getMyScore()>= mankala.getOponentScore()){
                 if(mankala.getMyScore()==mankala.getOponentScore())
@@ -97,9 +145,15 @@ public class Controller {
         }else{
             RuchKolejnoscEtykieta.setText("Przeciwnik");
         }
+
         for (int i=0; i<Buttons.size(); i++) {
             String buttonState = String.valueOf(mankala.getGameState()[i]);
             Buttons.get(i).setText(buttonState);
         }
+//        try {
+//                TimeUnit.SECONDS.sleep(3);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
     }
 }

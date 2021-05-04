@@ -1,6 +1,7 @@
 package game_code;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Mankala {
     private int[] gameState = new int[]{4,4,4,4,4,4,0,4,4,4,4,4,4,0};
@@ -166,7 +167,7 @@ public class Mankala {
 
     public void printGameState(){
 
-        System.out.println("Ruch: "+firstPlayerTurn);
+        System.out.print("Ruch: "+firstPlayerTurn+"  ");
         for (int n:gameState) {
             System.out.print(n+", ");
         }
@@ -217,5 +218,13 @@ public class Mankala {
 
     public void setGameFinished(boolean gameFinished) {
         isGameFinished = gameFinished;
+    }
+
+    public int getRandomMove(){
+        ArrayList<Integer> moves = getAvalibleMoves();
+        Random r = new Random();
+        int moveIndex = r.nextInt(moves.size());
+        int randMove = moves.get(moveIndex);
+        return randMove;
     }
 }
