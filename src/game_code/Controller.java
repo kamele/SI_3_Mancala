@@ -1,8 +1,14 @@
 package game_code;
 
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.util.Duration;
 
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
@@ -96,26 +102,35 @@ public class Controller {
         mankala.makeMove(holeIndex);
         //System.out.println("wykonano ruch "+holeIndex+". Tura:"+mankala.isFirstPlayerTurn());
 
-        updateBoardView();
+        
+
+        //updateBoardView();
         mankala.printGameState();
 
-
-        if( !mankala.isGameFinished()){
-
-            System.out.println("wywołaj kolejny. Tura:"+mankala.isFirstPlayerTurn());
-            int aiMove = AlgMax.bestMove(mankala, mankala.isFirstPlayerTurn());
-            makeMoveAi(aiMove);
-
-        }else{
-            if(mankala.getMyScore()>= mankala.getOponentScore()){
-                if(mankala.getMyScore()==mankala.getOponentScore())
-                    System.out.println("Tie "+mankala.getMyScore()+"  :  "+mankala.getOponentScore());
-                else
-                    System.out.println("Win "+mankala.getMyScore()+"  :  "+mankala.getOponentScore());
-            }else{
-                System.out.println("Lost "+mankala.getMyScore()+"  :  "+mankala.getOponentScore());
-            }
+        try {
+            TimeUnit.SECONDS.sleep(2);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
+
+//
+//        if( !mankala.isGameFinished()){
+//
+//            System.out.println("wywołaj kolejny. Tura:"+mankala.isFirstPlayerTurn());
+//            int aiMove = AlgMax.bestMove(mankala, mankala.isFirstPlayerTurn());
+//
+//            makeMoveAi(aiMove);
+//
+//        }else{
+//            if(mankala.getMyScore()>= mankala.getOponentScore()){
+//                if(mankala.getMyScore()==mankala.getOponentScore())
+//                    System.out.println("Tie "+mankala.getMyScore()+"  :  "+mankala.getOponentScore());
+//                else
+//                    System.out.println("Win "+mankala.getMyScore()+"  :  "+mankala.getOponentScore());
+//            }else{
+//                System.out.println("Lost "+mankala.getMyScore()+"  :  "+mankala.getOponentScore());
+//            }
+//        }
     }
 
 
@@ -124,6 +139,39 @@ public class Controller {
         updateBoardView();
 
         makeMoveAi(mankala.getRandomMove());
+        //updateBoardView();
+
+        Thread thread = null;
+        Timeline timeline = new Timeline(new KeyFrame(Duration.millis(500),new EventHandler<ActionEvent>(){
+            @Override
+            public void handle(ActionEvent event) {
+                updateBoardView();
+            }
+        }));
+        timeline.setCycleCount(Animation.INDEFINITE);
+        timeline.play();
+        thread = new Thread(()->{
+            while (!mankala.isGameFinished()){
+                int aiMove = AlgMax.bestMove(mankala, mankala.isFirstPlayerTurn());
+                makeMoveAi(aiMove);
+
+            }
+
+        });
+        thread.start();
+
+
+
+        if(mankala.getMyScore()>= mankala.getOponentScore()){
+            if(mankala.getMyScore()==mankala.getOponentScore())
+                System.out.println("Tie "+mankala.getMyScore()+"  :  "+mankala.getOponentScore());
+            else
+                System.out.println("Win "+mankala.getMyScore()+"  :  "+mankala.getOponentScore());
+        }else{
+            System.out.println("Lost "+mankala.getMyScore()+"  :  "+mankala.getOponentScore());
+        }
+        updateBoardView();
+
     }
 
     public void updateBoardView(){
