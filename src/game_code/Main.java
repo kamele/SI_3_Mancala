@@ -21,18 +21,23 @@ public class Main extends Application {
         launch(args);
 
         System.out.println("Start Main");
-        Mankala mankala = new Mankala();
+        //Mankala mankala = new Mankala();
         //mankala.setFirstPlayerTurn(false);
 
-        System.out.println("tworzenie");
-
-//        for (int i = 0; i < 100; i++) {
-//            int aiMove = AlgMax.getBestMove(mankala);//, mankala.isFirstPlayerTurn());
+//        System.out.println("tworzenie");
+//        int i=0;
+//        while (!mankala.isGameFinished()){
+//
+//            int aiMove = AlgMax.getBestMove(mankala, mankala.isFirstPlayerTurn());
 //            mankala.makeMove(aiMove);
 //            System.out.print(i+") "+aiMove+" ");
 //            mankala.printGameState();
+//            i++;
 //        }
-        makeMoveAi(mankala, mankala.getRandomMove());
+        //makeMoveAi(mankala, mankala.getRandomMove());
+
+
+
     }
 
     public static void makeMoveAi(Mankala mankala, int holeIndex){

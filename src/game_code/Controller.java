@@ -3,8 +3,6 @@ package game_code;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -39,7 +37,7 @@ public class Controller {
         mankala= new Mankala();
 
 
-        Buttons = new ArrayList<Button>();
+        Buttons = new ArrayList<>();
         Buttons.add(Button0);
         Buttons.add(Button1);
         Buttons.add(Button2);
@@ -81,7 +79,6 @@ public class Controller {
 
         mankala.makeMove(holeIndex);
 
-
         updateBoardView();
 
         //czlowiek ai
@@ -102,9 +99,6 @@ public class Controller {
         mankala.makeMove(holeIndex);
         //System.out.println("wykonano ruch "+holeIndex+". Tura:"+mankala.isFirstPlayerTurn());
 
-        
-
-        //updateBoardView();
         mankala.printGameState();
 
         try {
@@ -113,24 +107,6 @@ public class Controller {
             e.printStackTrace();
         }
 
-//
-//        if( !mankala.isGameFinished()){
-//
-//            System.out.println("wywołaj kolejny. Tura:"+mankala.isFirstPlayerTurn());
-//            int aiMove = AlgMax.bestMove(mankala, mankala.isFirstPlayerTurn());
-//
-//            makeMoveAi(aiMove);
-//
-//        }else{
-//            if(mankala.getMyScore()>= mankala.getOponentScore()){
-//                if(mankala.getMyScore()==mankala.getOponentScore())
-//                    System.out.println("Tie "+mankala.getMyScore()+"  :  "+mankala.getOponentScore());
-//                else
-//                    System.out.println("Win "+mankala.getMyScore()+"  :  "+mankala.getOponentScore());
-//            }else{
-//                System.out.println("Lost "+mankala.getMyScore()+"  :  "+mankala.getOponentScore());
-//            }
-//        }
     }
 
 
@@ -139,28 +115,18 @@ public class Controller {
         updateBoardView();
 
         makeMoveAi(mankala.getRandomMove());
-        //updateBoardView();
 
-        Thread thread = null;
-        Timeline timeline = new Timeline(new KeyFrame(Duration.millis(500),new EventHandler<ActionEvent>(){
-            @Override
-            public void handle(ActionEvent event) {
-                updateBoardView();
-            }
-        }));
+        Timeline timeline = new Timeline(new KeyFrame(Duration.millis(500), event -> updateBoardView()));
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
-        thread = new Thread(()->{
+
+        Thread thread = new Thread(()->{
             while (!mankala.isGameFinished()){
-                int aiMove = AlgMax.bestMove(mankala, mankala.isFirstPlayerTurn());
+                int aiMove = AlgMax.getBestMove(mankala, mankala.isFirstPlayerTurn());
                 makeMoveAi(aiMove);
-
             }
-
         });
         thread.start();
-
-
 
         if(mankala.getMyScore()>= mankala.getOponentScore()){
             if(mankala.getMyScore()==mankala.getOponentScore())
@@ -170,7 +136,6 @@ public class Controller {
         }else{
             System.out.println("Lost "+mankala.getMyScore()+"  :  "+mankala.getOponentScore());
         }
-        updateBoardView();
 
     }
 
@@ -186,6 +151,8 @@ public class Controller {
             }else{
                 gemeStateLabel.setText("Lost");
             }
+        }else{
+            gemeStateLabel.setText("");
         }
 
         if(mankala.isFirstPlayerTurn()){
@@ -198,10 +165,5 @@ public class Controller {
             String buttonState = String.valueOf(mankala.getGameState()[i]);
             Buttons.get(i).setText(buttonState);
         }
-//        try {
-//                TimeUnit.SECONDS.sleep(3);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
     }
 }

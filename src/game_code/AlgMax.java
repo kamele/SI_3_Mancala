@@ -18,7 +18,7 @@ public class AlgMax {
                     bestScore = score;
                     bestMove = move;
                 }
-            }else {
+            }else{
                 if(score<bestScore){
                     bestScore = score;
                     bestMove = move;
@@ -40,7 +40,11 @@ public class AlgMax {
     public static int[] minMax(Mankala mankala, int moveMade, int depth, boolean maxPlayerIsFirst){
         //warunek zakonczenia przeszukiwania
         if(mankala.isGameFinished() || depth==0){
-            return new int[]{moveMade, mankala.getMyScore()-mankala.getOponentScore()};
+            if(maxPlayerIsFirst){
+                return new int[]{moveMade, mankala.getMyScore()-mankala.getOponentScore()};
+            }else{
+                return new int[]{moveMade, mankala.getOponentScore()-mankala.getMyScore()};
+            }
         }
 
         ArrayList<Integer> moves = mankala.getAvalibleMoves();
@@ -54,12 +58,12 @@ public class AlgMax {
 
             if(mankala.isFirstPlayerTurn()==maxPlayerIsFirst){
                 if(copyScore[1]>bestScore){
-                    bestMove = copyScore[0];
+                    bestMove = move;
                     bestScore = copyScore[1];
                 }
             }else {
                 if(copyScore[1]<bestScore){
-                    bestMove = copyScore[0];
+                    bestMove = move;
                     bestScore = copyScore[1];
                 }
             }
