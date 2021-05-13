@@ -10,6 +10,12 @@ public class Mankala {
     private int secondPlayerWell =13;
     private boolean isGameFinished = false;
 
+    private int firstPlayerMovesCount = 0;
+    private int secondPlayerMovesCount = 0;
+
+    private double firstPlayerProcessTime = 0;
+    private double secondPlayerProcessTime = 0;
+
     //konstruktory
     public Mankala(){//defoult state
         gameState = new int[]{4,4,4,4,4,4,0,4,4,4,4,4,4,0};
@@ -29,6 +35,10 @@ public class Mankala {
         secondPlayerWell = mankala.secondPlayerWell;
         firstPlayerTurn = mankala.firstPlayerTurn;
         isGameFinished = mankala.isGameFinished;
+        firstPlayerMovesCount= mankala.firstPlayerMovesCount;
+        secondPlayerMovesCount = mankala.secondPlayerMovesCount;
+        firstPlayerProcessTime=mankala.firstPlayerProcessTime;
+        secondPlayerProcessTime=mankala.secondPlayerProcessTime;
     }
 
     public void makeMove(int holeIndex) {//throws Exception {
@@ -192,9 +202,51 @@ public class Mankala {
     public int getMyScore(){
         return gameState[firstPlayerWell];
     }
-
     public int getOponentScore(){
         return gameState[secondPlayerWell];
+    }
+
+    public int getRandomMove(){
+        ArrayList<Integer> moves = getAvalibleMoves();
+        Random r = new Random();
+        int moveIndex = r.nextInt(moves.size());
+        int randMove = moves.get(moveIndex);
+        return randMove;
+    }
+
+    public void addProcessTime(double time, boolean player){
+        if(player){
+            setFirstPlayerProcessTime(getFirstPlayerProcessTime()+time);
+        }else{
+            setSecondPlayerProcessTime(getSecondPlayerProcessTime()+time);
+        }
+    }
+    public void increaseMoveCounter(boolean player){
+        if(player){
+            setFirstPlayerMovesCount(getFirstPlayerMovesCount()+1);
+        }else{
+            setSecondPlayerMovesCount(getSecondPlayerMovesCount()+1);
+        }
+    }
+
+    public int getWinner(){
+        if(isGameFinished==false) return 0;
+        if(getMyScore()>getOponentScore()) return 1;
+        else return 2;
+    }
+    
+    public int getWinnerMovesCount(){
+        if(!isGameFinished) return -1;
+        if(getWinner()==1) return firstPlayerMovesCount;
+        else return  secondPlayerMovesCount;
+
+    }
+
+    public double getWinnerProcessTime(){
+        if(!isGameFinished) return -1;
+        if(getWinner()==1) return firstPlayerProcessTime;
+        else return  secondPlayerProcessTime;
+
     }
 
     //setery , gettery
@@ -215,16 +267,37 @@ public class Mankala {
     public boolean isGameFinished() {
         return isGameFinished;
     }
-
     public void setGameFinished(boolean gameFinished) {
         isGameFinished = gameFinished;
     }
 
-    public int getRandomMove(){
-        ArrayList<Integer> moves = getAvalibleMoves();
-        Random r = new Random();
-        int moveIndex = r.nextInt(moves.size());
-        int randMove = moves.get(moveIndex);
-        return randMove;
+    public int getFirstPlayerMovesCount() {
+        return firstPlayerMovesCount;
     }
+    public void setFirstPlayerMovesCount(int firstPlayerMovesCount) {
+        this.firstPlayerMovesCount = firstPlayerMovesCount;
+    }
+
+    public int getSecondPlayerMovesCount() {
+        return secondPlayerMovesCount;
+    }
+    public void setSecondPlayerMovesCount(int secondPlayerMovesCount) {
+        this.secondPlayerMovesCount = secondPlayerMovesCount;
+    }
+
+    public double getFirstPlayerProcessTime() {
+        return firstPlayerProcessTime;
+    }
+    public void setFirstPlayerProcessTime(double firstPlayerProcessTime) {
+        this.firstPlayerProcessTime = firstPlayerProcessTime;
+    }
+
+    public double getSecondPlayerProcessTime() {
+        return secondPlayerProcessTime;
+    }
+    public void setSecondPlayerProcessTime(double secondPlayerProcessTime) {
+        this.secondPlayerProcessTime = secondPlayerProcessTime;
+    }
+
+
 }

@@ -4,10 +4,11 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.util.Duration;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
@@ -28,13 +29,27 @@ public class Controller {
     public Button Button11;
     public Button Button12;
     public Button Button13;
+
     public Label RuchKolejnoscEtykieta;
     public Label gemeStateLabel;
     public Button AiVsAiButton;
 
+
+    public RadioButton minMaxRadio;
+    public RadioButton alfaBetaRadio;
+    public ToggleGroup group;
+    boolean chosenMinMaxAlg;
+
+    public Slider depthSlider;
+    double chosenDepth;
+
+
+
+
     @FXML
     private void initialize(){
         mankala= new Mankala();
+        mankala.setFirstPlayerTurn(false);
 
 
         Buttons = new ArrayList<>();
@@ -72,10 +87,44 @@ public class Controller {
         //ai vs ai
         AiVsAiButton.setOnAction(event -> playAiVsAi());
 
+
+
+
+        group = new ToggleGroup();
+        minMaxRadio.setToggleGroup(group);
+        alfaBetaRadio.setToggleGroup(group);
+        minMaxRadio.setSelected(true);
+        chosenMinMaxAlg=minMaxRadio.isSelected();
+        minMaxRadio.setOnAction(event -> setChosenAlgorytm());
+
+        depthSlider.setMin(1);
+        depthSlider.setMax(5);
+        depthSlider.setValue(4);
+        depthSlider.setShowTickLabels(true);
+        depthSlider.setShowTickMarks(true);
+        depthSlider.setBlockIncrement(1);
+        chosenDepth=depthSlider.getValue();
+        depthSlider.setOnMouseDragReleased(event -> setChosenDepth());
+
+
+    }
+
+    public int chosenAlgorytmGetMove(){
+
+        printCurrentState();
+        if(minMaxRadio.isSelected()){
+            return AlgMax.getBestMove(mankala,(int) chosenDepth, mankala.isFirstPlayerTurn());
+        }else{
+            return AlfaBeta.getBestMove(mankala, (int) chosenDepth, mankala.isFirstPlayerTurn());
+        }
+
     }
 
     public void makeMove(int holeIndex){
         if(!mankala.isIndexPermitted(holeIndex)) return;
+
+        //liczenie ruchów
+        mankala.increaseMoveCounter(mankala.isFirstPlayerTurn());
 
         mankala.makeMove(holeIndex);
 
@@ -83,23 +132,27 @@ public class Controller {
 
         //czlowiek ai
         if(!mankala.isFirstPlayerTurn() && !mankala.isGameFinished()){
-
-            int aiMove = AlgMax.getBestMove(mankala, mankala.isFirstPlayerTurn());//AlgMax.bestMove(mankala);
+            //int [] computedMove = AlgMax.getBestMove(mankala, mankala.isFirstPlayerTurn());//AlgMax.bestMove(mankala);
+            int aiMove = chosenAlgorytmGetMove();//AlgMax.getBestMove(mankala, mankala.isFirstPlayerTurn());//AlgMax.bestMove(mankala);
+            //mankala.addProcessTime(computedMove[1]);
             makeMove(aiMove);
         }
     }
 
     public void makeMoveAi(int holeIndex){
         if(!mankala.isIndexPermitted(holeIndex)){
-            System.out.println("Ruch niedozwolonyu"+holeIndex);
+            //System.out.println("Ruch niedozwolonyu"+holeIndex);
             return;
         }
 
-        System.out.println("wykonaj ruch "+holeIndex+". Tura:"+mankala.isFirstPlayerTurn());
+        //liczenie ruchów
+        mankala.increaseMoveCounter(mankala.isFirstPlayerTurn());
+
+        //System.out.println("wykonaj ruch "+holeIndex+". Tura:"+mankala.isFirstPlayerTurn());
         mankala.makeMove(holeIndex);
         //System.out.println("wykonano ruch "+holeIndex+". Tura:"+mankala.isFirstPlayerTurn());
 
-        mankala.printGameState();
+        //mankala.printGameState();
 
         try {
             TimeUnit.SECONDS.sleep(2);
@@ -120,11 +173,23 @@ public class Controller {
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
 
+
+        System.out.println(this.mankala.isGameFinished()+" ; "+this.mankala.getWinner()+" ; "+this.mankala.getWinnerMovesCount()+" ; "+this.mankala.getWinnerProcessTime()+"\n");
+
         Thread thread = new Thread(()->{
             while (!mankala.isGameFinished()){
-                int aiMove = AlgMax.getBestMove(mankala, mankala.isFirstPlayerTurn());
+                int aiMove = chosenAlgorytmGetMove();//int aiMove = AlgMax.getBestMove(mankala, mankala.isFirstPlayerTurn());
                 makeMoveAi(aiMove);
+
             }
+
+            //mankala.printGameState();
+            if(minMaxRadio.isSelected()){
+                saveGame("AiVsAi_min_max.txt");
+            }else{
+                saveGame("AiVsAi_alfa_beta.txt");
+            }
+
         });
         thread.start();
 
@@ -136,11 +201,13 @@ public class Controller {
         }else{
             System.out.println("Lost "+mankala.getMyScore()+"  :  "+mankala.getOponentScore());
         }
+        System.out.println(this.mankala.isGameFinished()+" ; "+this.mankala.getWinner()+" ; "+this.mankala.getWinnerMovesCount()+" ; "+this.mankala.getWinnerProcessTime()+"\n");
+
 
     }
 
     public void updateBoardView(){
-        System.out.println("update");
+        //System.out.println("update");
 
         if(mankala.isGameFinished()){
             if(mankala.getMyScore()>= mankala.getOponentScore()){
@@ -166,4 +233,39 @@ public class Controller {
             Buttons.get(i).setText(buttonState);
         }
     }
+
+    public void setChosenAlgorytm(){
+        chosenMinMaxAlg=minMaxRadio.isSelected();
+    }
+    public void setChosenDepth(){
+        chosenDepth=depthSlider.getValue();
+    }
+
+
+    public void printCurrentState(){
+        System.out.println("-----Stan gry---------");
+        //System.out.println("Algorytm"+chosenMinMaxAlg);
+        //System.out.println("Głębokość"+chosenDepth);
+        mankala.printGameState();
+        System.out.println("Liczba ruchów pierwszego gracza: "+mankala.getFirstPlayerMovesCount()+" Czas:"+mankala.getFirstPlayerProcessTime());
+        System.out.println("Liczba ruchów drugiego gracza: "+mankala.getSecondPlayerMovesCount()+" Czas:"+mankala.getSecondPlayerProcessTime());
+
+    }
+
+    public void saveGame(String fileName){
+        FileWriter fileWriter = null;
+
+        try {
+            fileWriter = new FileWriter(fileName, true);
+            //fileWriter.write(this.mankala.isGameFinished()+" ; "+this.mankala.getWinner()+" ; "+this.mankala.getWinnerMovesCount()+" ; "+this.mankala.getWinnerProcessTime()+"\n");
+            fileWriter.write(this.mankala.isGameFinished()+" ; "+this.mankala.getWinner()+" ; "+this.mankala.getWinnerMovesCount()+" ; "+this.mankala.getWinnerProcessTime()+"\n");
+
+            if (fileWriter != null) {
+                fileWriter.close();
+            }
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
 }

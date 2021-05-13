@@ -12,32 +12,61 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception{
         Parent root = FXMLLoader.load(getClass().getResource("mankalaBoard.fxml"));
         primaryStage.setTitle("Mankala");
-        primaryStage.setScene(new Scene(root, 710, 400));
+        primaryStage.setScene(new Scene(root, 710, 500));
         primaryStage.show();
     }
 
 
     public static void main(String[] args) {
+        testsEtap3();
+
         launch(args);
 
-        System.out.println("Start Main");
-        //Mankala mankala = new Mankala();
-        //mankala.setFirstPlayerTurn(false);
-
-//        System.out.println("tworzenie");
-//        int i=0;
-//        while (!mankala.isGameFinished()){
-//
-//            int aiMove = AlgMax.getBestMove(mankala, mankala.isFirstPlayerTurn());
-//            mankala.makeMove(aiMove);
-//            System.out.print(i+") "+aiMove+" ");
-//            mankala.printGameState();
-//            i++;
-//        }
-        //makeMoveAi(mankala, mankala.getRandomMove());
 
 
+    }
 
+    public static void testsEtap3(){
+        System.out.println("Start Etap 3 tests");
+        Mankala mankala = new Mankala();
+        mankala.setFirstPlayerTurn(false);
+
+        System.out.println("---Wylicz najlepszy ruch------------");
+        System.out.println("Tura: "+mankala.isFirstPlayerTurn());
+        System.out.println("Stan gry przed: ");
+        mankala.printGameState();
+        System.out.println("Liczba ruchów pierwszego gracza: "+mankala.getFirstPlayerMovesCount()+" Czas:"+mankala.getFirstPlayerProcessTime());
+        System.out.println("Liczba ruchów drugiego gracza: "+mankala.getSecondPlayerMovesCount()+" Czas:"+mankala.getSecondPlayerProcessTime());
+        System.out.println();
+
+        System.out.println("Wylicz ruch alfa-beta: "+AlfaBeta.getBestMove(mankala,4, mankala.isFirstPlayerTurn()));
+        System.out.println("Liczba ruchów pierwszego gracza: "+mankala.getFirstPlayerMovesCount()+" Czas:"+mankala.getFirstPlayerProcessTime());
+        System.out.println("Liczba ruchów drugiego gracza: "+mankala.getSecondPlayerMovesCount()+" Czas:"+mankala.getSecondPlayerProcessTime());
+        System.out.println();
+
+
+        System.out.println("Wylicz ruch min-max : "+AlgMax.getBestMove(mankala,4, mankala.isFirstPlayerTurn()));
+        System.out.println("Liczba ruchów pierwszego gracza: "+mankala.getFirstPlayerMovesCount()+" Czas:"+mankala.getFirstPlayerProcessTime());
+        System.out.println("Liczba ruchów drugiego gracza: "+mankala.getSecondPlayerMovesCount()+" Czas:"+mankala.getSecondPlayerProcessTime());
+        System.out.println();
+
+    }
+
+
+
+
+
+    public static void testsEtap2(){
+        System.out.println("Start Etap 2 tests");
+        Mankala mankala = new Mankala();
+        System.out.println("---Losowy ruch------------");
+        System.out.println("Tura: "+mankala.isFirstPlayerTurn());
+        System.out.println("Stan gry przed: ");
+        mankala.printGameState();
+        System.out.println("Losowy ruch 1 : "+mankala.getRandomMove());
+        System.out.println("Losowy ruch 2 : "+mankala.getRandomMove());
+        System.out.println("Losowy ruch 3 : "+mankala.getRandomMove());
+        System.out.println("Losowy ruch 4 : "+mankala.getRandomMove());
     }
 
     public static void makeMoveAi(Mankala mankala, int holeIndex){
@@ -66,7 +95,6 @@ public class Main extends Application {
             }
         }
     }
-
 
     public static void tests(){
         Mankala mankala = new Mankala();
