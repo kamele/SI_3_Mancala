@@ -95,7 +95,7 @@ public class Controller {
             Buttons.get(i).setOnAction(event -> makeMove(finalI));
         }
         //ai vs ai
-        AiVsAiButton.setOnAction(event -> playAiVsAi());
+        AiVsAiButton.setOnAction(event -> playAiVsAi()); //filename first part
 
 
 
@@ -109,7 +109,7 @@ public class Controller {
 
         depthSlider.setMin(1);
         depthSlider.setMax(5);
-        depthSlider.setValue(2);
+        depthSlider.setValue(4);
 
         depthSlider.setShowTickLabels(true);
         depthSlider.setShowTickMarks(true);
@@ -139,6 +139,7 @@ public class Controller {
         holesHeuristicRadio.setToggleGroup(heuristicGroup);
         setChosenHeuristic();
 
+        //testHeuristic();
     }
 
     public int chosenAlgorytmGetMove(){
@@ -217,9 +218,9 @@ public class Controller {
 
             //mankala.printGameState();
             if(minMaxRadio.isSelected()){
-                saveGame("AiVsAi_min_max.txt");
+                saveGame(heuristic.getHeuristicName()+"_min_max_"+chosenDepth+".txt");
             }else{
-                saveGame("AiVsAi_alfa_beta.txt");
+                saveGame(heuristic.getHeuristicName()+"_alfa_beta"+chosenDepth+".txt");
             }
 
         });
@@ -315,4 +316,95 @@ public class Controller {
         }
     }
 
+//    public void testHeuristic(){
+//        testWellScoreHeuristic();
+//        testWellAndNumberOfHolesScoreHeuristic();
+//        testNumberOfHolesScoreHeuristic();
+//    }
+//
+//    public void testWellScoreHeuristic(){
+//        System.out.println("testWellScoreHeuristic");
+//        //WellScoreHeuristic
+//        heuristic = new WellScoreHeuristic();
+//        //WellScoreHeuristic - min max
+//        chosenMinMaxAlg=true;
+//        chosenDepth = 4;
+//
+//        for(int i=0; i<100; i++){
+//            playAiVsAi("WellScoreHeuristic");
+//        }
+//        chosenDepth = 2;
+//        for(int i=0; i<100; i++){
+//            playAiVsAi("WellScoreHeuristic");
+//        }
+//
+//        //WellScoreHeuristic - alfa beta
+//        chosenMinMaxAlg=false;
+//        chosenDepth = 4;
+//
+//        for(int i=0; i<100; i++){
+//            playAiVsAi("WellScoreHeuristic");
+//        }
+//        chosenDepth = 2;
+//        for(int i=0; i<100; i++){
+//            playAiVsAi("WellScoreHeuristic");
+//        }
+//    }
+//    public void testWellAndNumberOfHolesScoreHeuristic(){
+//        System.out.println("testWellAndNumberOfHolesScoreHeuristic");
+//
+//        //WellAndNumberOfHolesScoreHeuristic
+//        heuristic = new WellAndNumberOfHolesScoreHeuristic();
+//        //WellAndNumberOfHolesScoreHeuristic - min max
+//        chosenMinMaxAlg=true;
+//        chosenDepth = 4;
+//
+//        for(int i=0; i<100; i++){
+//            playAiVsAi("WellAndNumberOfHolesScoreHeuristic");
+//        }
+//        chosenDepth = 2;
+//        for(int i=0; i<100; i++){
+//            playAiVsAi("WellAndNumberOfHolesScoreHeuristic");
+//        }
+//
+//        //WellAndNumberOfHolesScoreHeuristic - alfa beta
+//        chosenMinMaxAlg=false;
+//        chosenDepth = 4;
+//
+//        for(int i=0; i<100; i++){
+//            playAiVsAi("WellAndNumberOfHolesScoreHeuristic");
+//        }
+//        chosenDepth = 2;
+//        for(int i=0; i<100; i++){
+//            playAiVsAi("WellAndNumberOfHolesScoreHeuristic");
+//        }
+//    }
+//    public void testNumberOfHolesScoreHeuristic(){
+//        System.out.println("testNumberOfHolesScoreHeuristic");
+//        //NumberOfHolesScoreHeuristic
+//        heuristic = new NumberOfHolesScoreHeuristic();
+//        //NumberOfHolesScoreHeuristic - min max
+//        chosenMinMaxAlg=true;
+//        chosenDepth = 4;
+//
+//        for(int i=0; i<100; i++){
+//            playAiVsAi("NumberOfHolesScoreHeuristic");
+//        }
+//        chosenDepth = 2;
+//        for(int i=0; i<100; i++){
+//            playAiVsAi("NumberOfHolesScoreHeuristic");
+//        }
+//
+//        //NumberOfHolesScoreHeuristic - alfa beta
+//        chosenMinMaxAlg=false;
+//        chosenDepth = 4;
+//
+//        for(int i=0; i<100; i++){
+//            playAiVsAi("NumberOfHolesScoreHeuristic");
+//        }
+//        chosenDepth = 2;
+//        for(int i=0; i<100; i++){
+//            playAiVsAi("NumberOfHolesScoreHeuristic");
+//        }
+//    }
 }
