@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 public class AlgMax {
 
+    public IScoreHeuristic heuristic;
+
     public static int bestMove(Mankala mankala,boolean maxPlayerIsFirst ){
         ArrayList<Integer> moves =mankala.getAvalibleMoves();
 
@@ -30,11 +32,11 @@ public class AlgMax {
         return bestMove;
     }
 
-    public static int getBestMove(Mankala mankala,int depth, boolean maxPlayerIsFirst){
+    public static int getBestMove(Mankala mankala,int depth, boolean maxPlayerIsFirst, IScoreHeuristic heuristic){
         double startTime = System.nanoTime();
         //System.out.print("minMax - getBestMove: turn="+mankala.isFirstPlayerTurn()+"   ");
         boolean player = mankala.isFirstPlayerTurn();
-        int bestMove = AlgMax.minMax(mankala,mankala.getAvalibleMoves().get(0),4, player)[0];
+        int bestMove = AlgMax.minMax(mankala,mankala.getAvalibleMoves().get(0),4, player,heuristic)[0];
         //System.out.println("getBestMove: move="+bestMove);
 
         double finishTime = System.nanoTime();
@@ -44,14 +46,10 @@ public class AlgMax {
         return bestMove;
     }
 
-    public static int[] minMax(Mankala mankala, int moveMade, int depth, boolean maxPlayerIsFirst){
+    public static int[] minMax(Mankala mankala, int moveMade, int depth, boolean maxPlayerIsFirst, IScoreHeuristic heuristic){
         //warunek zakonczenia przeszukiwania
         if(mankala.isGameFinished() || depth==0){
-            if(maxPlayerIsFirst){
-                return new int[]{moveMade, mankala.getMyScore()-mankala.getOponentScore()};
-            }else{
-                return new int[]{moveMade, mankala.getOponentScore()-mankala.getMyScore()};
-            }
+            return new int[]{moveMade, heuristic.getGemeScore(mankala,maxPlayerIsFirst)};
         }
 
         ArrayList<Integer> moves = mankala.getAvalibleMoves();
@@ -61,7 +59,7 @@ public class AlgMax {
         for (Integer move: moves ) {
             Mankala copyMankala = new Mankala(mankala);
             copyMankala.makeMove(move);
-            int[] copyScore = minMax(copyMankala, move,depth-1, maxPlayerIsFirst);
+            int[] copyScore = minMax(copyMankala, move,depth-1, maxPlayerIsFirst, heuristic);
 
             if(mankala.isFirstPlayerTurn()==maxPlayerIsFirst){
                 if(copyScore[1]>bestScore){

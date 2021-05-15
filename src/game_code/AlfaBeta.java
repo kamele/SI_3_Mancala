@@ -3,12 +3,12 @@ import java.util.ArrayList;
 
 public class AlfaBeta {
 
-    public static int getBestMove(Mankala mankala, int depth, boolean maxPlayerIsFirst){
+    public static int getBestMove(Mankala mankala, int depth, boolean maxPlayerIsFirst, IScoreHeuristic heuristic){
         double startTime = System.nanoTime();
         System.out.print("alfaBeta - getBestMove: turn="+mankala.isFirstPlayerTurn()+"   ");
         boolean player = mankala.isFirstPlayerTurn();
 
-        int bestMove = AlfaBeta.alfaBeta(mankala,mankala.getAvalibleMoves().get(0),4, Integer.MIN_VALUE,Integer.MAX_VALUE,   mankala.isFirstPlayerTurn())[0];
+        int bestMove = AlfaBeta.alfaBeta(mankala,mankala.getAvalibleMoves().get(0),4, Integer.MIN_VALUE,Integer.MAX_VALUE,   mankala.isFirstPlayerTurn(), heuristic)[0];
         System.out.println("getBestMove: move="+bestMove);
 
 
@@ -19,14 +19,10 @@ public class AlfaBeta {
         return bestMove;
     }
 
-    public static int[] alfaBeta(Mankala mankala, int moveMade, int depth, int alfa, int beta, boolean maxPlayerIsFirst){
+    public static int[] alfaBeta(Mankala mankala, int moveMade, int depth, int alfa, int beta, boolean maxPlayerIsFirst, IScoreHeuristic heuristic){
         //warunek zakonczenia przeszukiwania
         if(mankala.isGameFinished() || depth==0){
-            if(maxPlayerIsFirst){
-                return new int[]{moveMade, mankala.getMyScore()-mankala.getOponentScore()};
-            }else{
-                return new int[]{moveMade, mankala.getOponentScore()-mankala.getMyScore()};
-            }
+            return new int[]{moveMade, heuristic.getGemeScore(mankala,maxPlayerIsFirst)};
         }
 
         ArrayList<Integer> moves = mankala.getAvalibleMoves();
@@ -36,7 +32,7 @@ public class AlfaBeta {
         for (Integer move: moves ) {
             Mankala copyMankala = new Mankala(mankala);
             copyMankala.makeMove(move);
-            int[] copyScore = alfaBeta(copyMankala, move,depth-1, alfa, beta, maxPlayerIsFirst);
+            int[] copyScore = alfaBeta(copyMankala, move,depth-1, alfa, beta, maxPlayerIsFirst, heuristic);
 
             if(mankala.isFirstPlayerTurn()==maxPlayerIsFirst){
                 //ustawianie alfy

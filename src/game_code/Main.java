@@ -12,13 +12,13 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception{
         Parent root = FXMLLoader.load(getClass().getResource("mankalaBoard.fxml"));
         primaryStage.setTitle("Mankala");
-        primaryStage.setScene(new Scene(root, 710, 500));
+        primaryStage.setScene(new Scene(root, 710, 515));
         primaryStage.show();
     }
 
 
     public static void main(String[] args) {
-        testsEtap3();
+        //testsEtap3();
 
         launch(args);
 
@@ -26,10 +26,13 @@ public class Main extends Application {
 
     }
 
+
+
     public static void testsEtap3(){
         System.out.println("Start Etap 3 tests");
         Mankala mankala = new Mankala();
         mankala.setFirstPlayerTurn(false);
+        IScoreHeuristic heuristic = new WellScoreHeuristic();
 
         System.out.println("---Wylicz najlepszy ruch------------");
         System.out.println("Tura: "+mankala.isFirstPlayerTurn());
@@ -39,22 +42,18 @@ public class Main extends Application {
         System.out.println("Liczba ruchów drugiego gracza: "+mankala.getSecondPlayerMovesCount()+" Czas:"+mankala.getSecondPlayerProcessTime());
         System.out.println();
 
-        System.out.println("Wylicz ruch alfa-beta: "+AlfaBeta.getBestMove(mankala,4, mankala.isFirstPlayerTurn()));
+        System.out.println("Wylicz ruch alfa-beta: "+AlfaBeta.getBestMove(mankala,4, mankala.isFirstPlayerTurn(),heuristic));
         System.out.println("Liczba ruchów pierwszego gracza: "+mankala.getFirstPlayerMovesCount()+" Czas:"+mankala.getFirstPlayerProcessTime());
         System.out.println("Liczba ruchów drugiego gracza: "+mankala.getSecondPlayerMovesCount()+" Czas:"+mankala.getSecondPlayerProcessTime());
         System.out.println();
 
 
-        System.out.println("Wylicz ruch min-max : "+AlgMax.getBestMove(mankala,4, mankala.isFirstPlayerTurn()));
+        System.out.println("Wylicz ruch min-max : "+AlgMax.getBestMove(mankala,4, mankala.isFirstPlayerTurn(),heuristic));
         System.out.println("Liczba ruchów pierwszego gracza: "+mankala.getFirstPlayerMovesCount()+" Czas:"+mankala.getFirstPlayerProcessTime());
         System.out.println("Liczba ruchów drugiego gracza: "+mankala.getSecondPlayerMovesCount()+" Czas:"+mankala.getSecondPlayerProcessTime());
         System.out.println();
 
     }
-
-
-
-
 
     public static void testsEtap2(){
         System.out.println("Start Etap 2 tests");

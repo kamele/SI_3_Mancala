@@ -3,8 +3,12 @@ package game_code;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.transform.Translate;
 import javafx.util.Duration;
 
 import java.io.FileWriter;
@@ -42,6 +46,12 @@ public class Controller {
 
     public Slider depthSlider;
     double chosenDepth;
+
+    public IScoreHeuristic heuristic;
+    public ToggleGroup heuristicGroup;
+    public RadioButton wellHeuristicRadio;
+    public RadioButton wellAndHolesHeuristicRadio;
+    public RadioButton holesHeuristicRadio;
 
 
 
@@ -99,13 +109,35 @@ public class Controller {
 
         depthSlider.setMin(1);
         depthSlider.setMax(5);
-        depthSlider.setValue(4);
+        depthSlider.setValue(2);
+
         depthSlider.setShowTickLabels(true);
         depthSlider.setShowTickMarks(true);
         depthSlider.setBlockIncrement(1);
         chosenDepth=depthSlider.getValue();
-        depthSlider.setOnMouseDragReleased(event -> setChosenDepth());
+        //depthSlider.setOnMouseDragReleased(event -> setChosenDepth());
+        //depthSlider.addEventHandler(MouseEvent.MOUSE_DRAGGED, setChosenDepth());
 
+        depthSlider.valueProperty().addListener(new ChangeListener<Number>() {
+
+                @Override
+                public void changed(
+                        ObservableValue<? extends Number> observableValue,
+                        Number oldValue,
+                        Number newValue) {
+
+                    setChosenDepth(newValue.intValue());
+                }
+            });
+
+        heuristicGroup = new ToggleGroup();
+        wellHeuristicRadio.setOnAction(event -> setChosenHeuristic());
+        wellHeuristicRadio.setToggleGroup(heuristicGroup);
+        wellAndHolesHeuristicRadio.setOnAction(event -> setChosenHeuristic());
+        wellAndHolesHeuristicRadio.setToggleGroup(heuristicGroup);
+        holesHeuristicRadio.setOnAction(event -> setChosenHeuristic());
+        holesHeuristicRadio.setToggleGroup(heuristicGroup);
+        setChosenHeuristic();
 
     }
 
@@ -113,9 +145,9 @@ public class Controller {
 
         printCurrentState();
         if(minMaxRadio.isSelected()){
-            return AlgMax.getBestMove(mankala,(int) chosenDepth, mankala.isFirstPlayerTurn());
+            return AlgMax.getBestMove(mankala,(int) chosenDepth, mankala.isFirstPlayerTurn(), heuristic);
         }else{
-            return AlfaBeta.getBestMove(mankala, (int) chosenDepth, mankala.isFirstPlayerTurn());
+            return AlfaBeta.getBestMove(mankala, (int) chosenDepth, mankala.isFirstPlayerTurn(), heuristic);
         }
 
     }
@@ -154,11 +186,11 @@ public class Controller {
 
         //mankala.printGameState();
 
-        try {
-            TimeUnit.SECONDS.sleep(2);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            TimeUnit.SECONDS.sleep(2);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
 
     }
 
@@ -237,15 +269,30 @@ public class Controller {
     public void setChosenAlgorytm(){
         chosenMinMaxAlg=minMaxRadio.isSelected();
     }
-    public void setChosenDepth(){
-        chosenDepth=depthSlider.getValue();
+
+    public void setChosenHeuristic(){
+
+        if(wellHeuristicRadio.isSelected())
+            heuristic = new WellScoreHeuristic();
+        else if(wellAndHolesHeuristicRadio.isSelected())
+            heuristic = new WellAndNumberOfHolesScoreHeuristic();
+        else if(holesHeuristicRadio.isSelected())
+            heuristic = new NumberOfHolesScoreHeuristic();
+
+        if(heuristic==null)
+            heuristic = new WellScoreHeuristic();
+    }
+
+    public void setChosenDepth(int depthValue){
+        chosenDepth=depthValue;
     }
 
 
     public void printCurrentState(){
         System.out.println("-----Stan gry---------");
         //System.out.println("Algorytm"+chosenMinMaxAlg);
-        //System.out.println("Głębokość"+chosenDepth);
+        System.out.println("Głębokość "+chosenDepth);
+        System.out.println("Heurystyka "+heuristic.getHeuristicName());
         mankala.printGameState();
         System.out.println("Liczba ruchów pierwszego gracza: "+mankala.getFirstPlayerMovesCount()+" Czas:"+mankala.getFirstPlayerProcessTime());
         System.out.println("Liczba ruchów drugiego gracza: "+mankala.getSecondPlayerMovesCount()+" Czas:"+mankala.getSecondPlayerProcessTime());

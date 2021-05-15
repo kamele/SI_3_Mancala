@@ -299,5 +299,19 @@ public class Mankala {
         this.secondPlayerProcessTime = secondPlayerProcessTime;
     }
 
+    public int getFirstPlayerWell() {
+        return firstPlayerWell;
+    }
 
+    public void setFirstPlayerWell(int firstPlayerWell) {
+        this.firstPlayerWell = firstPlayerWell;
+    }
+
+    public int getSecondPlayerWell() {
+        return secondPlayerWell;
+    }
+
+    public void setSecondPlayerWell(int secondPlayerWell) {
+        this.secondPlayerWell = secondPlayerWell;
+    }
 }
