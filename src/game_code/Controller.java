@@ -150,7 +150,16 @@ public class Controller {
         }else{
             return AlfaBeta.getBestMove(mankala, (int) chosenDepth, mankala.isFirstPlayerTurn(), heuristic);
         }
+    }
 
+    public int chosenAlgorytmGetMoveAbVsMm(){
+        printCurrentState();
+
+        if(mankala.isFirstPlayerTurn()){
+            return AlgMax.getBestMove(mankala,(int) chosenDepth, mankala.isFirstPlayerTurn(), heuristic);
+        }else{
+            return AlfaBeta.getBestMove(mankala, (int) chosenDepth, mankala.isFirstPlayerTurn(), heuristic);
+        }
     }
 
     public void makeMove(int holeIndex){
@@ -216,13 +225,52 @@ public class Controller {
 
             }
 
-            //mankala.printGameState();
+            mankala.printGameState();
             if(minMaxRadio.isSelected()){
                 saveGame(heuristic.getHeuristicName()+"_min_max_"+chosenDepth+".txt");
             }else{
                 saveGame(heuristic.getHeuristicName()+"_alfa_beta"+chosenDepth+".txt");
             }
 
+            //saveGame("ab_vs_mm_"+heuristic.getHeuristicName()+"_"+chosenDepth+".txt");
+        });
+        thread.start();
+
+        if(mankala.getMyScore()>= mankala.getOponentScore()){
+            if(mankala.getMyScore()==mankala.getOponentScore())
+                System.out.println("Tie "+mankala.getMyScore()+"  :  "+mankala.getOponentScore());
+            else
+                System.out.println("Win "+mankala.getMyScore()+"  :  "+mankala.getOponentScore());
+        }else{
+            System.out.println("Lost "+mankala.getMyScore()+"  :  "+mankala.getOponentScore());
+        }
+        System.out.println(this.mankala.isGameFinished()+" ; "+this.mankala.getWinner()+" ; "+this.mankala.getWinnerMovesCount()+" ; "+this.mankala.getWinnerProcessTime()+"\n");
+
+
+    }
+    public void playAiVsAiAbVsMm(){
+        mankala = new Mankala();
+        updateBoardView();
+
+        makeMoveAi(mankala.getRandomMove());
+
+        Timeline timeline = new Timeline(new KeyFrame(Duration.millis(500), event -> updateBoardView()));
+        timeline.setCycleCount(Animation.INDEFINITE);
+        timeline.play();
+
+
+        System.out.println(this.mankala.isGameFinished()+" ; "+this.mankala.getWinner()+" ; "+this.mankala.getWinnerMovesCount()+" ; "+this.mankala.getWinnerProcessTime()+"\n");
+
+        Thread thread = new Thread(()->{
+            while (!mankala.isGameFinished()){
+                int aiMove = chosenAlgorytmGetMoveAbVsMm();
+                makeMoveAi(aiMove);
+
+            }
+
+            mankala.printGameState();
+
+            saveGame("ab_vs_mm_"+heuristic.getHeuristicName()+"_"+chosenDepth+".txt");
         });
         thread.start();
 
@@ -305,8 +353,28 @@ public class Controller {
 
         try {
             fileWriter = new FileWriter(fileName, true);
-            //fileWriter.write(this.mankala.isGameFinished()+" ; "+this.mankala.getWinner()+" ; "+this.mankala.getWinnerMovesCount()+" ; "+this.mankala.getWinnerProcessTime()+"\n");
             fileWriter.write(this.mankala.isGameFinished()+" ; "+this.mankala.getWinner()+" ; "+this.mankala.getWinnerMovesCount()+" ; "+this.mankala.getWinnerProcessTime()+"\n");
+//            fileWriter.write(this.mankala.isGameFinished()+" ; "+this.mankala.getWinner()+" ; "+this.mankala.getWinnerMovesCount()+" ; "+this.mankala.getWinnerProcessTime()+" ; "
+//                    +this.mankala.getMyScore()+" ; "+this.mankala.getFirstPlayerMovesCount()+" ; "+this.mankala.getFirstPlayerProcessTime()+" ; "
+//                    +this.mankala.getOponentScore()+" ; "+this.mankala.getSecondPlayerMovesCount()+" ; "+this.mankala.getSecondPlayerProcessTime()
+//                    +"\n");
+
+            if (fileWriter != null) {
+                fileWriter.close();
+            }
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+    public void saveGameAbVsMm(String fileName){
+        FileWriter fileWriter = null;
+
+        try {
+            fileWriter = new FileWriter(fileName, true);
+              fileWriter.write(this.mankala.isGameFinished()+" ; "+this.mankala.getWinner()+" ; "+this.mankala.getWinnerMovesCount()+" ; "+this.mankala.getWinnerProcessTime()+" ; "
+                    +this.mankala.getMyScore()+" ; "+this.mankala.getFirstPlayerMovesCount()+" ; "+this.mankala.getFirstPlayerProcessTime()+" ; "
+                    +this.mankala.getOponentScore()+" ; "+this.mankala.getSecondPlayerMovesCount()+" ; "+this.mankala.getSecondPlayerProcessTime()
+                    +"\n");
 
             if (fileWriter != null) {
                 fileWriter.close();
@@ -316,95 +384,96 @@ public class Controller {
         }
     }
 
-//    public void testHeuristic(){
-//        testWellScoreHeuristic();
-//        testWellAndNumberOfHolesScoreHeuristic();
-//        testNumberOfHolesScoreHeuristic();
-//    }
-//
-//    public void testWellScoreHeuristic(){
-//        System.out.println("testWellScoreHeuristic");
-//        //WellScoreHeuristic
-//        heuristic = new WellScoreHeuristic();
-//        //WellScoreHeuristic - min max
-//        chosenMinMaxAlg=true;
-//        chosenDepth = 4;
-//
-//        for(int i=0; i<100; i++){
-//            playAiVsAi("WellScoreHeuristic");
-//        }
-//        chosenDepth = 2;
-//        for(int i=0; i<100; i++){
-//            playAiVsAi("WellScoreHeuristic");
-//        }
-//
-//        //WellScoreHeuristic - alfa beta
-//        chosenMinMaxAlg=false;
-//        chosenDepth = 4;
-//
-//        for(int i=0; i<100; i++){
-//            playAiVsAi("WellScoreHeuristic");
-//        }
-//        chosenDepth = 2;
-//        for(int i=0; i<100; i++){
-//            playAiVsAi("WellScoreHeuristic");
-//        }
-//    }
-//    public void testWellAndNumberOfHolesScoreHeuristic(){
-//        System.out.println("testWellAndNumberOfHolesScoreHeuristic");
-//
-//        //WellAndNumberOfHolesScoreHeuristic
-//        heuristic = new WellAndNumberOfHolesScoreHeuristic();
-//        //WellAndNumberOfHolesScoreHeuristic - min max
-//        chosenMinMaxAlg=true;
-//        chosenDepth = 4;
-//
-//        for(int i=0; i<100; i++){
-//            playAiVsAi("WellAndNumberOfHolesScoreHeuristic");
-//        }
-//        chosenDepth = 2;
-//        for(int i=0; i<100; i++){
-//            playAiVsAi("WellAndNumberOfHolesScoreHeuristic");
-//        }
-//
-//        //WellAndNumberOfHolesScoreHeuristic - alfa beta
-//        chosenMinMaxAlg=false;
-//        chosenDepth = 4;
-//
-//        for(int i=0; i<100; i++){
-//            playAiVsAi("WellAndNumberOfHolesScoreHeuristic");
-//        }
-//        chosenDepth = 2;
-//        for(int i=0; i<100; i++){
-//            playAiVsAi("WellAndNumberOfHolesScoreHeuristic");
-//        }
-//    }
-//    public void testNumberOfHolesScoreHeuristic(){
-//        System.out.println("testNumberOfHolesScoreHeuristic");
-//        //NumberOfHolesScoreHeuristic
-//        heuristic = new NumberOfHolesScoreHeuristic();
-//        //NumberOfHolesScoreHeuristic - min max
-//        chosenMinMaxAlg=true;
-//        chosenDepth = 4;
-//
-//        for(int i=0; i<100; i++){
-//            playAiVsAi("NumberOfHolesScoreHeuristic");
-//        }
-//        chosenDepth = 2;
-//        for(int i=0; i<100; i++){
-//            playAiVsAi("NumberOfHolesScoreHeuristic");
-//        }
-//
-//        //NumberOfHolesScoreHeuristic - alfa beta
-//        chosenMinMaxAlg=false;
-//        chosenDepth = 4;
-//
-//        for(int i=0; i<100; i++){
-//            playAiVsAi("NumberOfHolesScoreHeuristic");
-//        }
-//        chosenDepth = 2;
-//        for(int i=0; i<100; i++){
-//            playAiVsAi("NumberOfHolesScoreHeuristic");
-//        }
-//    }
+    public void testHeuristic(){
+        testWellScoreHeuristic();
+        testWellAndNumberOfHolesScoreHeuristic();
+        testNumberOfHolesScoreHeuristic();
+    }
+
+    public void testWellScoreHeuristic(){
+        System.out.println("testWellScoreHeuristic");
+        //WellScoreHeuristic
+        heuristic = new WellScoreHeuristic();
+        //WellScoreHeuristic - min max
+        chosenMinMaxAlg=true;
+        chosenDepth = 4;
+
+        for(int i=0; i<100; i++){
+            playAiVsAi();
+        }
+        chosenDepth = 2;
+        for(int i=0; i<100; i++){
+            playAiVsAi();
+        }
+
+        //WellScoreHeuristic - alfa beta
+        chosenMinMaxAlg=false;
+        chosenDepth = 4;
+
+        for(int i=0; i<100; i++){
+            playAiVsAi();
+        }
+        chosenDepth = 2;
+        for(int i=0; i<100; i++){
+            playAiVsAi();
+        }
+    }
+    public void testWellAndNumberOfHolesScoreHeuristic(){
+        System.out.println("testWellAndNumberOfHolesScoreHeuristic");
+
+        //WellAndNumberOfHolesScoreHeuristic
+        heuristic = new WellAndNumberOfHolesScoreHeuristic();
+        //WellAndNumberOfHolesScoreHeuristic - min max
+        chosenMinMaxAlg=true;
+        chosenDepth = 4;
+
+        for(int i=0; i<100; i++){
+            playAiVsAi();
+        }
+        chosenDepth = 2;
+        for(int i=0; i<100; i++){
+            playAiVsAi();
+        }
+
+        //WellAndNumberOfHolesScoreHeuristic - alfa beta
+        chosenMinMaxAlg=false;
+        chosenDepth = 4;
+
+        for(int i=0; i<100; i++){
+            playAiVsAi();
+        }
+        chosenDepth = 2;
+        for(int i=0; i<100; i++){
+            playAiVsAi();
+        }
+    }
+    public void testNumberOfHolesScoreHeuristic(){
+        System.out.println("testNumberOfHolesScoreHeuristic");
+        //NumberOfHolesScoreHeuristic
+        heuristic = new NumberOfHolesScoreHeuristic();
+        //NumberOfHolesScoreHeuristic - min max
+        chosenMinMaxAlg=true;
+        chosenDepth = 4;
+
+        for(int i=0; i<100; i++){
+            playAiVsAi();
+        }
+        chosenDepth = 2;
+        for(int i=0; i<100; i++){
+            playAiVsAi();
+        }
+
+        //NumberOfHolesScoreHeuristic - alfa beta
+        chosenMinMaxAlg=false;
+        chosenDepth = 4;
+
+        for(int i=0; i<100; i++){
+            playAiVsAi();
+        }
+        chosenDepth = 2;
+        for(int i=0; i<100; i++){
+            playAiVsAi();
+        }
+    }
+
 }
